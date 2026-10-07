@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BTE | Cinematic Thermal Engineering</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts: Space Grotesk for cinematic headers, Inter for app-like UI text -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        cinematic: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        onyx: '#121212',
+                        charcoal: '#1a1a1a',
+                        fire: {
+                            light: '#facc15', // Yellow
+                            base: '#ea580c',  // Orange
+                            deep: '#dc2626',  // Crimson
+                            dark: '#991b1b',  // Dark Red
+                        }
+                    },
+                    backgroundImage: {
+                        'thermal-gradient': 'linear-gradient(135deg, #dc2626 0%, #ea580c 50%, #facc15 100%)',
+                        'dark-gradient': 'linear-gradient(180deg, #121212 0%, #1a1a1a 100%)',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #2a1111 0%, #121212 50%);
+        }
+
+        /* --- Kinetic Typography Animations --- */
+        .kinetic-wrap {
+            overflow: hidden;
+            display: inline-block;
+        }
+        .kinetic-text {
+            display: inline-block;
+            transform: translateY(110%);
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+        .reveal-active .kinetic-text {
+            transform: translateY(0);
+        }
+
+        /* --- 3D Thermal Core Animation (Pure CSS) --- */
+        .scene3d {
+            perspective: 1200px;
+            width: 100%;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .cube {
+            width: 300px;
+            height: 300px;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateCube 20s infinite linear;
+        }
+        .face {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border: 2px solid rgba(234, 88, 12, 0.3);
+            background: radial-gradient(circle, rgba(220,38,38,0.1) 0%, rgba(18,18,18,0) 70%);
+            box-shadow: 0 0 50px rgba(220, 38, 38, 0.2) inset;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+        .face::before {
+            content: '';
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            border: 1px dashed rgba(250, 204, 21, 0.5);
+            animation: spinPulse 5s infinite linear;
+        }
+        
+        .front  { transform: translateZ(150px); }
+        .back   { transform: rotateY(180deg) translateZ(150px); }
+        .right  { transform: rotateY(90deg) translateZ(150px); }
+        .left   { transform: rotateY(-90deg) translateZ(150px); }
+        .top    { transform: rotateX(90deg) translateZ(150px); }
+        .bottom { transform: rotateX(-90deg) translateZ(150px); }
+
+        @keyframes rotateCube {
+            0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+            100% { transform: rotateX(360deg) rotateY(360deg) rotateZ(180deg); }
+        }
+        @keyframes spinPulse {
+            0% { transform: rotate(0deg) scale(1); opacity: 0.3; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 0.8; box-shadow: 0 0 20px #ea580c; }
+            100% { transform: rotate(360deg) scale(1); opacity: 0.3; }
+        }
+
+        /* --- Scroll Reveal Utilities --- */
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .delay-100 { transition-delay: 100ms; }
+        .delay-200 { transition-delay: 200ms; }
+        .delay-300 { transition-delay: 300ms; }
+
+        /* --- Glass App UI Cards --- */
+        .glass-card {
+            background: rgba(26, 26, 26, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(234, 88, 12, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-top: 1px solid rgba(250, 204, 21, 0.6);
+            box-shadow: 0 30px 60px -12px rgba(220, 38, 38, 0.15);
+        }
+
+        /* Glowing text gradient */
+        .text-glow {
+            text-shadow: 0 0 20px rgba(234, 88, 12, 0.5);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #121212; }
+        ::-webkit-scrollbar-thumb { background: #ea580c; border-radius: 3px; }
+    </style>
+</head>
+<body class="antialiased selection:bg-fire-base selection:text-white">
+
+    <nav class="fixed w-full z-50 mix-blend-difference top-0 py-6 px-6 md:px-12 flex justify-between items-center pointer-events-none">
+        <div class="pointer-events-auto">
+            <span class="font-cinematic font-bold text-2xl tracking-tighter text-white">
+                BTE<span class="text-fire-base">.</span>
+            </span>
+        </div>
+        <div class="pointer-events-auto hidden md:flex gap-8 text-sm font-semibold tracking-widest uppercase text-gray-400">
+            <a href="#company" class="hover:text-white transition-colors">Company</a>
+            <a href="#network" class="hover:text-white transition-colors">Network</a>
+        </div>
+        <div class="pointer-events-auto md:hidden text-white text-xl">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+    </nav>
+
+    <header class="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+        
+        <!-- 3D CSS Background Elements -->
+        <div class="scene3d">
+            <div class="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face right"></div>
+                <div class="face left"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
+            </div>
+        </div>
+
+        <div class="relative z-10 w-full max-w-7xl mx-auto px-6 md:px-12 flex flex-col items-center text-center reveal-trigger">
+           
+
+            <h1 class="font-cinematic font-black text-6xl md:text-8xl lg:text-[10rem] leading-[0.85] tracking-tighter uppercase mb-6 drop-shadow-2xl">
+                <div class="kinetic-wrap"><span class="kinetic-text bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-500">Biochemical</span></div><br>
+                <div class="kinetic-wrap"><span class="kinetic-text bg-clip-text text-transparent bg-thermal-gradient text-glow delay-100">Thermal</span></div>
+            </h1>
+            
+            <p class="font-sans text-lg md:text-2xl text-gray-400 font-light max-w-2xl mx-auto mt-4 scroll-reveal delay-200 border-l-2 border-fire-base pl-4 text-left italic">
+                "... all about Heat Treatment Plants and Furnaces"
+            </p>
+
+            <div class="mt-16 scroll-reveal delay-300">
+                <a href="#network" class="group relative inline-flex items-center justify-center px-8 py-4 font-sans font-semibold tracking-widest text-white uppercase bg-transparent overflow-hidden rounded-lg">
+                    <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-fire-deep"></span>
+                    <span class="absolute inset-0 w-full h-full transition-all duration-500 ease-out transform translate-y-full group-hover:translate-y-0 bg-thermal-gradient rounded-lg"></span>
+                    <span class="relative flex items-center gap-3">
+                        Engage Network <i class="fa-solid fa-arrow-down group-hover:animate-bounce"></i>
+                    </span>
+                    <span class="absolute bottom-0 left-0 w-full h-1 transition-all duration-300 ease-out transform bg-fire-base group-hover:bg-white"></span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 opacity-50">
+            <span class="text-[10px] tracking-widest uppercase font-semibold">Scroll</span>
+            <div class="w-[1px] h-12 bg-gradient-to-b from-white to-transparent"></div>
+        </div>
+    </header>
+
+    <section id="network" class="py-32 relative bg-dark-gradient">
+        
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            
+            <div class="mb-20 scroll-reveal">
+                <h2 class="font-cinematic font-bold text-4xl md:text-6xl uppercase tracking-tighter mb-4">
+                    Global <span class="bg-clip-text text-transparent bg-thermal-gradient">Network.</span>
+                </h2>
+                <p class="text-gray-400 font-sans max-w-md">Connect with our primary operational nodes for engineering consultations and plant implementations.</p>
+            </div>
+
+            <!-- Contact Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                
+                <!-- Card 1: Head Office -->
+                <div class="glass-card rounded-2xl p-8 scroll-reveal flex flex-col h-full relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl transform group-hover:scale-110 transition-transform duration-700">
+                        <i class="fa-solid fa-industry"></i>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-full bg-fire-deep/20 flex items-center justify-center text-fire-base border border-fire-base/30 shadow-[0_0_15px_rgba(234,88,12,0.2)]">
+                            <i class="fa-solid fa-location-crosshairs text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-cinematic font-bold text-xl uppercase tracking-wide">Head Office</h3>
+                            <span class="text-xs text-fire-base font-semibold tracking-widest uppercase">Mumbai HQ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-5 text-gray-300 font-sans text-sm flex-1">
+                        <div class="flex items-start gap-3 group/item">
+                            <i class="fa-solid fa-map-pin mt-1 text-gray-500 group-hover/item:text-fire-base transition-colors"></i>
+                            <p class="leading-relaxed">
+                                45, Shivaji Industrial Estate,<br>
+                                Plot No. 12, Sector 18,<br>
+                                Vashi, Navi Mumbai-400 703,<br>
+                                Maharashtra, India
+                            </p>
+                        </div>
+                        <div class="flex items-start gap-3 group/item">
+                            <i class="fa-solid fa-phone mt-1 text-gray-500 group-hover/item:text-fire-base transition-colors"></i>
+                            <div class="flex flex-col">
+                                <a href="tel:912227891234" class="hover:text-white transition-colors">91-22-2789 1234</a>
+                                <a href="tel:912227895678" class="hover:text-white transition-colors">91-22-2789 5678</a>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 group/item">
+                            <i class="fa-solid fa-envelope text-gray-500 group-hover/item:text-fire-base transition-colors"></i>
+                            <a href="mailto:info@biochemicalthermal.in" class="hover:text-white transition-colors break-all">info@biochemicalthermal.in</a>
+                        </div>
+                    </div>
+                    
+
+                </div>
+
+                <!-- Card 2: Registered Office -->
+                <div class="glass-card rounded-2xl p-8 scroll-reveal delay-100 flex flex-col h-full relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl transform group-hover:scale-110 transition-transform duration-700">
+                        <i class="fa-solid fa-file-signature"></i>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-full bg-fire-deep/20 flex items-center justify-center text-fire-light border border-fire-light/30 shadow-[0_0_15px_rgba(250,204,21,0.2)]">
+                            <i class="fa-solid fa-building text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-cinematic font-bold text-xl uppercase tracking-wide">Registered Office</h3>
+                            <span class="text-xs text-fire-light font-semibold tracking-widest uppercase">Admin Node</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-5 text-gray-300 font-sans text-sm flex-1">
+                        <div class="flex items-start gap-3 group/item">
+                            <i class="fa-solid fa-map-pin mt-1 text-gray-500 group-hover/item:text-fire-light transition-colors"></i>
+                            <p class="leading-relaxed">
+                                210, Corporate Avenue,<br>
+                                Sonawala Road, Goregaon East,<br>
+                                Mumbai-400 063,<br>
+                                Maharashtra, India
+                            </p>
+                        </div>
+                        <div class="flex items-start gap-3 group/item">
+                            <i class="fa-solid fa-phone mt-1 text-gray-500 group-hover/item:text-fire-light transition-colors"></i>
+                            <div class="flex flex-col">
+                                <a href="tel:912228761234" class="hover:text-white transition-colors">91-22-2876 1234</a>
+                                <a href="tel:912228765678" class="hover:text-white transition-colors">91-22-2876 5678</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+            
+                </div>
+
+                <!-- Card 3: Middle East & China -->
+                <div class="glass-card rounded-2xl p-8 scroll-reveal delay-200 flex flex-col h-full relative overflow-hidden group md:col-span-2 lg:col-span-1">
+                    <div class="absolute top-0 right-0 p-8 opacity-5 text-8xl transform group-hover:scale-110 transition-transform duration-700">
+                        <i class="fa-solid fa-globe"></i>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-8">
+                        <div class="w-12 h-12 rounded-full bg-fire-deep/20 flex items-center justify-center text-fire-deep border border-fire-deep/30 shadow-[0_0_15px_rgba(220,38,38,0.2)]">
+                            <i class="fa-solid fa-plane-departure text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-cinematic font-bold text-xl uppercase tracking-wide">Middle East & China</h3>
+                            <span class="text-xs text-fire-deep font-semibold tracking-widest uppercase">Global Rep</span>
+                        </div>
+                    </div>
+                    
+                    <div class="space-y-5 text-gray-300 font-sans text-sm flex-1">
+                        <div class="flex items-center gap-4 mb-2 p-3 bg-white/5 rounded-lg border border-white/5 group/item">
+                            <div class="w-10 h-10 rounded bg-charcoal flex items-center justify-center text-gray-400 group-hover/item:text-fire-deep transition-colors">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <p class="font-bold text-white uppercase tracking-wider">Mr. Rahman</p>
+                                <p class="text-[10px] text-gray-500 uppercase tracking-widest">Official Representative</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 group/item">
+                            <i class="fa-solid fa-phone text-gray-500 group-hover/item:text-fire-deep transition-colors"></i>
+                            <a href="tel:0097145678901" class="hover:text-white transition-colors">00971 4 567 8901</a>
+                        </div>
+                        <div class="flex items-center gap-3 group/item">
+                            <i class="fa-solid fa-envelope text-gray-500 group-hover/item:text-fire-deep transition-colors"></i>
+                            <a href="mailto:rahman@bteglobal.ae" class="hover:text-white transition-colors break-all">rahman@bteglobal.ae</a>
+                        </div>
+                    </div>
+                    
+           
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-onyx border-t border-white/10 py-10 relative overflow-hidden">
+        <!-- Abstract gradient line -->
+        <div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-fire-base to-transparent opacity-50"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="text-center md:text-left font-cinematic">
+                <span class="text-xl font-bold tracking-tighter text-white">BTE<span class="text-fire-base">.</span></span>
+                <p class="text-[10px] text-gray-500 tracking-widest uppercase mt-2">
+                    Copyright &copy; <span id="current-year"></span>, Biochemical Thermal Engineering Pvt. Ltd.<br>All Rights Reserved.
+                </p>
+            </div>
+            
+            <div class="flex flex-col items-center md:items-end text-[10px] tracking-widest uppercase text-gray-500 font-sans">
+                <p class="mb-1">Site developed by codegiggastechnologies, Mumbai.</p>
+                <a href="mailto:codegiggas25@gmail.com" class="text-gray-400 hover:text-fire-base transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-code"></i> codegiggas25@gmail.com
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Set dynamic year
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+
+        // Intersection Observer for scroll animations (Kinetic Text & Fade-ins)
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.15
+        };
+
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Trigger kinetic typography
+                    if(entry.target.classList.contains('reveal-trigger')) {
+                        entry.target.classList.add('reveal-active');
+                    }
+                    // Trigger standard fade/slide up
+                    if(entry.target.classList.contains('scroll-reveal')) {
+                        entry.target.classList.add('visible');
+                    }
+                    // Unobserve after animating once for better performance
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // Observe kinetic triggers
+        document.querySelectorAll('.reveal-trigger').forEach(el => scrollObserver.observe(el));
+        // Observe standard scroll reveals
+        document.querySelectorAll('.scroll-reveal').forEach(el => scrollObserver.observe(el));
+
+        // Optional: Interactive Parallax on Hero based on mouse movement (subtle cinematic effect)
+        const scene = document.querySelector('.scene3d');
+        const cube = document.querySelector('.cube');
+        
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth - 0.5) * 20; // max 20deg
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            
+            if(scene && window.scrollY < window.innerHeight) {
+                // Adjust perspective origin slightly based on mouse
+                scene.style.perspectiveOrigin = `${50 + x}% ${50 + y}%`;
+            }
+        });
+    </script>
+</body>
+</html>       
